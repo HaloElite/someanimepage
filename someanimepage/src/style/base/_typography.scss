@@ -1,0 +1,30 @@
+@use "../variables";
+
+.fontbase {
+  font-family: variables.$fontbase, sans-serif;
+}
+
+.fontheading {
+  font-family: variables.$fontheading, sans-serif;
+}
+
+// Colors
+.colorbase {
+  color: variables.$base;
+}
+
+.coloraccentred {
+  color: variables.$accentred;
+}
+
+.coloraccentyellow {
+  color: variables.$accentyellow;
+}
+
+.coloraccentmetal {
+  color: variables.$accentmetal;
+}
+
+.coloraccentblack {
+  color: variables.$accentblack;
+}

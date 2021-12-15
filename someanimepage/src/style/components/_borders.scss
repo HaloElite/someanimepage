@@ -1,0 +1,25 @@
+@use "../variables";
+
+.borderbase {
+  border-color: variables.$base;
+}
+
+.borderaccentred {
+  border-color: variables.$accentred;
+}
+
+.borderaccentyellow {
+  border-color: variables.$accentyellow;
+}
+
+.borderaccentmetal {
+  border-color: variables.$accentmetal;
+}
+
+.borderaccentmetal-light {
+  border-color: lighten(variables.$accentmetal, 30%);
+}
+
+.borderaccentblack {
+  border-color: variables.$accentblack;
+}

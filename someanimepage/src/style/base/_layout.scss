@@ -1,0 +1,43 @@
+@use "../variables";
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.bgbase {
+  background-color: variables.$base;
+}
+
+.bgaccentred {
+  background-color: variables.$accentred;
+}
+
+.bgaccentredlight {
+  background-color: lighten(variables.$accentred, 15%);
+}
+
+.bgaccentyellow {
+  background-color: variables.$accentyellow;
+}
+
+.bgaccentmetal {
+  background-color: variables.$accentmetal;
+}
+
+.bgcaccentblack {
+  background-color: variables.$accentblack;
+}
+
+.bghero {
+  background-image: url(variables.$bghero);
+  background-position: 0 55%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

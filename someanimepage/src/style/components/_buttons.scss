@@ -1,0 +1,49 @@
+@use "../variables";
+
+.filterbtn:hover {
+  background-color: variables.$accentred;
+  color: variables.$base;
+}
+
+.filterbtn {
+  background-color: variables.$base;
+  color: variables.$accentred;
+  border-color: variables.$accentred;
+}
+
+.accentbtn:hover {
+  background-color: darken(variables.$accentred, 17.5%);
+  border-color: darken(variables.$accentred, 17.5%);
+}
+
+.accentbtn {
+  background-color: variables.$accentred;
+  color: variables.$base;
+  border-color: variables.$accentred;
+}
+
+.disabledbutton {
+  opacity: 0.45;
+  background-color: lighten(variables.$accentblack, 45%);
+  border-color: lighten(variables.$accentblack, 45%);
+  color: variables.$base;
+}
+
+.disabledbutton:hover {
+  background-color: lighten(variables.$accentblack, 45%);
+  border-color: lighten(variables.$accentblack, 45%);
+  cursor: default;
+}
+
+.disabledresetbutton {
+  opacity: 0.45;
+  background-color: lighten(variables.$accentblack, 35%);
+  border-color: lighten(variables.$accentblack, 35%);
+  color: variables.$base;
+}
+
+.disabledresetbutton:hover {
+  background-color: lighten(variables.$accentblack, 35%);
+  border-color: lighten(variables.$accentblack, 35%);
+  cursor: default;
+}

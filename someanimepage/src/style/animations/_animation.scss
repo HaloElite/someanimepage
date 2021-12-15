@@ -1,0 +1,109 @@
+@use "../variables";
+
+.animatelist {
+  animation-duration: 1s;
+  animation-name: slidein;
+}
+
+.animateout {
+  animation-duration: 1s;
+  animation-name: slideout;
+}
+
+@keyframes slidein {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+
+@keyframes slideout {
+  from {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+// -------------------------------------------------------- LOADER -------------------------------------------------
+
+.loader {
+  width: auto;
+  height: 50px;
+  text-align: center;
+  font-size: 2rem;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+
+  > div {
+    height: 100%;
+    width: 15px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-left: 2px;
+    -webkit-animation: delay 0.8s infinite ease-in-out;
+    animation: delay 0.8s infinite ease-in-out;
+  }
+
+  .bar1 {
+    background-color: lighten(variables.$accentmetal, 15%);
+  }
+  .bar2 {
+    background-color: variables.$accentred;
+    -webkit-animation-delay: -0.7s;
+    animation-delay: -0.7s;
+  }
+  .bar3 {
+    background-color: variables.$accentyellow;
+    -webkit-animation-delay: -0.6s;
+    animation-delay: -0.6s;
+  }
+  .bar4 {
+    background-color: variables.$accentred;
+    -webkit-animation-delay: -0.5s;
+    animation-delay: -0.5s;
+  }
+  .bar5 {
+    background-color: variables.$accentyellow;
+    -webkit-animation-delay: -0.4s;
+    animation-delay: -0.4s;
+  }
+  .bar6 {
+    background-color: lighten(variables.$accentblack, 15%);
+    -webkit-animation-delay: -0.3s;
+    animation-delay: -0.3s;
+  }
+}
+
+@-webkit-keyframes delay {
+  0%,
+  40%,
+  100% {
+    -webkit-transform: scaleY(0.05);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+  }
+}
+
+@keyframes delay {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.05);
+    -webkit-transform: scaleY(0.05);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
