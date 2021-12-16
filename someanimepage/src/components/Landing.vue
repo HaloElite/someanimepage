@@ -1,4 +1,4 @@
-<style lang="scss" scoped>
+<style lang="scss">
 @use '../style/_variables';
 @use '../style/base/_layout';
 @use '../style/base/_typography';
@@ -11,10 +11,17 @@
 * {
     box-sizing: border-box;
 }
+
+body {
+    background-color: variables.$base;
+}
 </style>
 
 <template>
 <div class="bgbase w-full fontbase max-w-2048 m-auto">
+
+    <card v-if="lookCloser" :anime_id="detailId" @lookfurther="lookCloser = false" />
+
     <div class="bghero bgbase h-v3/4 min-h-500 flex justify-center items-center">
         <div class="herocontent flex flex-col justify-center items-center">
             <h1 class="fontheading font-semibold xl:text-7xl text-4xl uppercase colorbase">
@@ -53,6 +60,8 @@
         </form>
     </div>
 
+    <!-- ----------------- ANIME CARDS ----------------- -->
+
     <div v-if="animedata.length === 0" class="flex flex-row justify-center w-1/2 m-auto mt-4 mb-20 py-4 bgaccentred">
         <p class="text-2xl font-semibold colorbase">Much empty - such wow!</p>
     </div>
@@ -75,7 +84,7 @@
 
     <div v-if="!loading && !filtered && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg">
+            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; lookCloser = true">
                 <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
@@ -97,7 +106,7 @@
     </div>
     <div v-else-if="!loading && filtered && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg">
+            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; lookCloser = true">
                 <img :src="item.image_url" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -133,9 +142,14 @@ import {
 import axios from "axios";
 import {
     useStore
-} from 'vuex';
+} from "vuex";
+
+import card from "./Card.vue"
 
 export default {
+    components: {
+        card
+    },
     setup() {
         const store = useStore()
 
@@ -148,6 +162,8 @@ export default {
         var error = ref(false);
         var filtered = ref(false);
         var activeGenre = ref("");
+        var detailId = ref("");
+        var lookCloser = ref(false);
 
         var animedata = computed({
             get() {
@@ -373,6 +389,8 @@ export default {
             filtered,
             activeGenre,
             disableFilter,
+            detailId,
+            lookCloser,
             // Methods
             searchname,
             searchseason,
