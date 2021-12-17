@@ -4,7 +4,7 @@
 
 <template>
 <div class="flex w-screen h-screen justify-center items-center bgoverlay fixed z-50 fontbase coloraccentblack" @click.self="shutcloseup">
-    <div class="w-8/12 h-v3/4 overflow-y-auto bgbase rounded-sm">
+    <div class="w-8/12 h-v3/4 overflow-y-auto bgbase rounded-md">
         <section>
             <article id="headings" class="border-b w-full borderaccentmetal p-6">
                 <p class="fontheading coloraccentred text-2xl">{{ animeCloseUp.title }}</p>
@@ -18,16 +18,24 @@
 
                 <p class="inline-block"><span class="font-semibold">Genre: </span><span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span> </span></p>
             </article>
-            <article id="media">
-                <div class="w-1/6 max-w-225 rounded-3xl">
+            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-center">
+                <div class="max-w-225 mr-10">
                     <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 </div>
                 <iframe width="420" height="315" source :src="animeCloseUp.trailer_url">
                 </iframe>
             </article>
-            <article id="furtherinformation">
-                <p>{{ animeCloseUp.synopsis }}</p>
-                <p>{{ animeCloseUp.related }}</p>
+            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
+                <p class="w-1/2 mr-2"><span class="font-semibold">Synopsis:</span> {{ animeCloseUp.synopsis }}</p>
+                <p class="w-1/2 ml-2">
+                    <span class="font-semibold">Related:</span>
+                    <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
+                        <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
+                            <span class="font-semibold">Name:</span> {{ item.name }}
+                            <span class="font-semibold">Type:</span> {{ item.type }}
+                        </p>
+                    </span>
+                </p>
             </article>
         </section>
 
