@@ -16,7 +16,7 @@
                 <p class="inline-block mr-2"><span class="font-semibold">Aired:</span> {{ dates.from }}</p>
                 <p class="inline-block mr-2"><span class="font-semibold">To:</span> {{ dates.to }}</p>
 
-                <p class="inline-block"><span class="font-semibold">Genre: </span><span v-for="genre in animeCloseUp.genres" :key="genre.mal_id" class="text-base">{{ genre.name }}</span></p>
+                <p class="inline-block"><span class="font-semibold">Genre: </span><span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span> </span></p>
             </article>
             <article id="media">
                 <div class="w-1/6 max-w-225 rounded-3xl">
