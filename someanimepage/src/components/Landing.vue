@@ -20,7 +20,7 @@ body {
 <template>
 <div class="bgbase w-full fontbase max-w-2048 m-auto">
 
-    <card v-if="lookCloser" :anime_id="detailId" @lookfurther="lookCloser = false" />
+    <card v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
     <div class="bghero bgbase h-v3/4 min-h-500 flex justify-center items-center">
         <div class="herocontent flex flex-col justify-center items-center">
@@ -84,7 +84,7 @@ body {
 
     <div v-if="!loading && !filtered && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; lookCloser = true">
+            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
@@ -106,7 +106,7 @@ body {
     </div>
     <div v-else-if="!loading && filtered && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; lookCloser = true">
+            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <img :src="item.image_url" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -163,7 +163,7 @@ export default {
         var filtered = ref(false);
         var activeGenre = ref("");
         var detailId = ref("");
-        var lookCloser = ref(false);
+        var zoomIn = ref(false);
 
         var animedata = computed({
             get() {
@@ -367,13 +367,6 @@ export default {
                 season.value = "fall";
             }
 
-            // Search ID
-            // axios.get(`https://api.jikan.moe/v3/anime/17741`)
-            //     .then((response) => {
-            //         if (response.status === 200 && response.data) {
-            //             console.log(response.data)
-            //         }
-            //     })
             searchseason();
         });
         return {
@@ -390,7 +383,7 @@ export default {
             activeGenre,
             disableFilter,
             detailId,
-            lookCloser,
+            zoomIn,
             // Methods
             searchname,
             searchseason,
