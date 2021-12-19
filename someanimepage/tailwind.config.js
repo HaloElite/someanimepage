@@ -10,7 +10,7 @@ module.exports = {
         '1/2': '50vh',
         '3/4': '75vh',
         'full': '100vh',
-        '55': '55vh'
+        '315': '315px'
       },
       minHeight: {
         '150': '150px',

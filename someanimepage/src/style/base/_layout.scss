@@ -45,3 +45,11 @@
 .bgoverlay {
   background-color: variables.$accentblacktransparent;
 }
+
+// ----------------------------------------------------------------------------------- SHADOWS
+
+.cardshadow {
+  box-shadow: 0px 15px 30px -18px variables.$accentmetal;
+  -webkit-box-shadow: 0px 15px 30px -18px variables.$accentmetal;
+  -moz-box-shadow: 0px 15px 30px -18px variables.$accentmetal;
+}

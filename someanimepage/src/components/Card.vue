@@ -13,28 +13,35 @@
                 </p>
             </article>
             <article id="details" class="border-b w-full borderaccentmetal p-6">
-                <p class="inline-block mr-2"><span class="font-semibold">Aired:</span> {{ dates.from }}</p>
-                <p class="inline-block mr-2"><span class="font-semibold">To:</span> {{ dates.to }}</p>
+                <p class="inline-block mr-2"><span class="font-semibold coloraccentred">Aired:</span> {{ dates.from }}</p>
+                <p class="inline-block mr-2"><span class="font-semibold coloraccentred">To:</span> {{ dates.to }}</p>
 
-                <p class="inline-block"><span class="font-semibold">Genre: </span><span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span> </span></p>
+                <p class="inline-block"><span class="font-semibold coloraccentred">Genre: </span><span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span> </span></p>
             </article>
-            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-center">
-                <div class="max-w-225 mr-10">
-                    <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
+            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-center">
+                <div class="w-1/2">
+                    <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive max-w-225 m-auto cardshadow">
                 </div>
-                <iframe width="420" height="315" source :src="animeCloseUp.trailer_url">
-                </iframe>
+                <p class="w-1/2 mr-2 max-h-315 overflow-y-auto"><span class="font-semibold coloraccentred">Synopsis:</span> {{ animeCloseUp.synopsis }}</p>
             </article>
-            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
-                <p class="w-1/2 mr-2"><span class="font-semibold">Synopsis:</span> {{ animeCloseUp.synopsis }}</p>
+            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
+                <div class="w-1/2">
+                    <iframe width="420" height="315" :src="animeCloseUp.trailer_url" class="cardshadow">
+                    </iframe>
+                </div>
                 <p class="w-1/2 ml-2">
-                    <span class="font-semibold">Related:</span>
-                    <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
-                        <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
-                            <span class="font-semibold">Name:</span> {{ item.name }}
-                            <span class="font-semibold">Type:</span> {{ item.type }}
-                        </p>
-                    </span>
+                    <span class="font-semibold coloraccentred">Related:</span>
+                    <template v-if="animeCloseUp.related.length > 0">
+                        <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
+                            <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
+                                <span class="font-semibold">Name:</span> {{ item.name }}
+                                <span class="font-semibold">Type:</span> {{ item.type }}
+                            </p>
+                        </span>
+                    </template>
+                    <template v-else>
+                        <p class="text-base mr-1">Nothing related was found...</p>
+                    </template>
                 </p>
             </article>
         </section>
