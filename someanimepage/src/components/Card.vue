@@ -3,8 +3,8 @@
 </style>
 
 <template>
-<div class="flex w-screen h-screen justify-center items-center bgoverlay fixed z-50 fontbase coloraccentblack" @click.self="shutcloseup">
-    <div class="w-8/12 h-v3/4 overflow-y-auto bgbase rounded-md">
+<div class="flex w-screen h-screen justify-center items-center bgoverlay fixed z-50 left-0 top-0 fontbase coloraccentblack" @click.self="shutcloseup">
+    <div class="w-8/12 max-w-1536 h-auto overflow-y-auto bgbase rounded-md">
         <section>
             <article id="headings" class="border-b w-full borderaccentmetal p-6">
                 <p class="fontheading coloraccentred text-2xl">{{ animeCloseUp.title }}</p>
@@ -22,7 +22,14 @@
                 <div class="w-1/2">
                     <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive max-w-225 m-auto cardshadow">
                 </div>
-                <p class="w-1/2 mr-2 max-h-315 overflow-y-auto"><span class="font-semibold coloraccentred">Synopsis:</span> {{ animeCloseUp.synopsis }}</p>
+                <p class="w-1/2 mr-2 h-auto"><span class="font-semibold coloraccentred">Synopsis:</span>
+                    <span id="visible">
+                        {{ visiblepart }}
+                    </span>
+                    <span :class="{'hidden': !isHidden}">...</span> <button type="button" :class="{'hidden': !isHidden}" class="m-1 coloraccentred" @click="readmore">read more</button>
+                    <span :class="{'hidden': isHidden}" class=" text-red-500">
+                        {{ hiddenpart }}
+                    </span></p>
             </article>
             <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
                 <div class="w-1/2">
@@ -31,7 +38,7 @@
                 </div>
                 <p class="w-1/2 ml-2">
                     <span class="font-semibold coloraccentred">Related:</span>
-                    <template v-if="animeCloseUp.related.length > 0">
+                    <template v-if="animeCloseUp.related?.length > 0">
                         <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
                             <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
                                 <span class="font-semibold">Name:</span> {{ item.name }}
@@ -69,6 +76,8 @@ export default {
             from: "",
             to: ""
         });
+        var hiddenpart = ref("");
+        var visiblepart = ref("");
 
         const shutcloseup = (e) => {
             context.emit('zoomOut');
@@ -97,13 +106,27 @@ export default {
             }
         }
 
+        // Display more text
+        let isHidden = ref(true);
+        const readmore = () => {
+            isHidden.value = !isHidden.value;
+        }
+
         onMounted(() => {
             // Search ID
             axios.get(`https://api.jikan.moe/v3/anime/${props.anime_id}`)
                 .then((response) => {
                     if (response.status === 200 && response.data) {
-                        console.log(response.data)
                         animeCloseUp.value = response.data;
+
+                        if (response.data.synopsis.length > 800) {
+                            visiblepart.value = response.data.synopsis.substring(0, 800);
+                            hiddenpart.value = response.data.synopsis.substring(800, response.data.synopsis.length);
+                        } else {
+                            visiblepart.value = response.data.synopsis;
+                        }
+                        console.log(visiblepart.value);
+                        console.log(hiddenpart.value);
 
                         formatDate(response.data.aired);
                     }
@@ -112,12 +135,18 @@ export default {
                 .catch(error => {
                     console.log(error);
                 })
+
         });
 
         return {
             animeCloseUp,
             dates,
-            shutcloseup
+            shutcloseup,
+            hiddenpart,
+            visiblepart,
+            isHidden,
+            // methods
+            readmore
         }
     }
 

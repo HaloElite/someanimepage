@@ -18,7 +18,7 @@ body {
 </style>
 
 <template>
-<div class="bgbase w-full fontbase max-w-2048 m-auto">
+<div class="bgbase w-screen fontbase max-w-2048 m-auto">
 
     <card v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
@@ -45,9 +45,9 @@ body {
             <div class="form-group">
                 <label for="season-select" class="coloraccentred">Season</label>
                 <select required v-model="season" name="season-select" id="season-select" class="py-2 px-4 bgbase rounded-sm border-2 borderaccentred outline-none">
-                    <option value="spring" selected>Frühling</option>
-                    <option value="summer">Sommer</option>
-                    <option value="fall">Herbst</option>
+                    <option value="spring" selected>Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="fall">Fall</option>
                     <option value="winter">Winter</option>
                 </select>
             </div>
