@@ -4,7 +4,7 @@
 
 <template>
 <div class="flex w-screen h-screen justify-center items-center bgoverlay fixed z-50 left-0 top-0 fontbase coloraccentblack" @click.self="shutcloseup">
-    <div class="w-8/12 max-w-1536 h-auto max-h-3/4 overflow-y-auto bgbase rounded-md">
+    <div class="w-10/12 max-w-1536 h-auto max-h-3/4 overflow-y-auto bgbase rounded-md">
         <section>
             <article id="headings" class="border-b w-full borderaccentmetal p-6">
                 <p class="fontheading coloraccentred text-2xl">{{ animeCloseUp.title }}</p>
@@ -17,18 +17,19 @@
                 <p class="inline-block mr-2"><span class="font-semibold coloraccentred">To:</span> {{ dates.to }}</p>
 
                 <p class="inline-block">
-                    <span class="font-semibold coloraccentred inline-block">
+                    <span class="font-semibold coloraccentred">
                         Genre:
                     </span>
-                    <span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span>
+                    <span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1 inline-block">
+                        {{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span>
                     </span>
                 </p>
             </article>
-            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-center">
-                <div class="w-1/2">
+            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-col justify-center items-center">
+                <div class="w-full mb-10">
                     <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive max-w-225 m-auto cardshadow">
                 </div>
-                <p class="w-1/2 mr-2 h-auto"><span class="font-semibold coloraccentred">Synopsis: </span>
+                <p class="w-full h-auto"><span class="font-semibold coloraccentred">Synopsis: </span>
                     <span id="visible">
                         {{ visiblepart }}
                     </span>
@@ -37,12 +38,12 @@
                         {{ hiddenpart }}
                     </span></p>
             </article>
-            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
-                <div class="w-1/2">
-                    <iframe width="420" height="315" :src="animeCloseUp.trailer_url" frameborder="0" allowfullscreen class="cardshadow">
+            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-col justify-start items-center">
+                <div class="w-full">
+                    <iframe :src="animeCloseUp.trailer_url" frameborder="0" allowfullscreen class="cardshadow max-w-full">
                     </iframe>
                 </div>
-                <p class="w-1/2 ml-2">
+                <p class="w-full ml-2">
                     <span class="font-semibold coloraccentred">Related:</span>
                     <template v-if="animeCloseUp.related?.length > 0">
                         <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">

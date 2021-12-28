@@ -20,31 +20,31 @@ body {
 <template>
 <div class="bgbase w-screen fontbase max-w-2048 m-auto">
 
-    <card v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
+    <cardmobile v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
-    <div class="bghero bgbase h-v3/4 min-h-500 flex justify-center items-center">
+    <div class="bgaccentred h-v1/4 flex justify-center items-center">
         <div class="flex flex-col justify-center items-center">
-            <h1 class="fontheading font-semibold xl:text-7xl text-4xl uppercase colorbase">
+            <h1 class="fontheading font-semibold text-4xl uppercase colorbase text-center">
                 Search Your Favorite Anime
             </h1>
             <div class="h-3 w-1/3 mt-2 bgbase rounded-full"></div>
         </div>
     </div>
 
-    <div class="w-full flex flex-row justify-center items-center">
-        <form @submit.prevent class="flex flex-row justify-center items-center w-1/4 m-auto p-10 rounded-3xl bgbase shadow-lg mb-6">
-            <div class="form-group">
-                <label for="keyword" class="coloraccentred">Name</label>
-                <input required v-model="keyword" type="text" name="keyword" placeholder="Kimi No Iru Machi" class="py-2 px-4 leading-5 bgbase rounded-sm border-2 borderaccentred outline-none">
+    <div class="w-full flex flex-col justify-center items-center bgaccentblack shadow-lg p-4">
+        <form @submit.prevent class="flex flex-col justify-center items-center w-full my-4">
+            <div class="form-group-mobile w-full">
+                <label for="keyword" class="colorbase text-sm">Name</label>
+                <input required v-model="keyword" type="text" name="keyword" placeholder="Kimi No Iru Machi" class="p-2 leading-5 bgbase rounded-sm outline-none mr-4 w-2/3">
+                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchname">suchen</button>
             </div>
 
-            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchname">suchen</button>
         </form>
 
-        <form @submit.prevent class="flex flex-row justify-center items-center w-1/3 m-auto p-10 rounded-3xl bgbase shadow-lg mb-6">
-            <div class="form-group">
-                <label for="season-select" class="coloraccentred">Season</label>
-                <select required v-model="season" name="season-select" id="season-select" class="py-2 px-4 leading-5 bgbase rounded-sm border-2 borderaccentred outline-none">
+        <form @submit.prevent class="flex flex-col justify-center items-center w-full my-4">
+            <div class="form-group-mobile mb-4 w-full">
+                <label for="season-select" class="colorbase text-sm">Season</label>
+                <select required v-model="season" name="season-select" id="season-select" class="p-2 leading-5 bgbase rounded-sm outline-none w-2/3">
                     <option value="spring" selected>Spring</option>
                     <option value="summer">Summer</option>
                     <option value="fall">Fall</option>
@@ -52,11 +52,11 @@ body {
                 </select>
             </div>
 
-            <div class="form-group ml-4">
-                <label for="keyword" class="coloraccentred">Year</label>
-                <input required v-model="year" min="1950" placeholder="2010" type="number" name="year" class="py-2 px-4 leading-5 bgbase rounded-sm border-2 borderaccentred outline-none">
+            <div class="form-group-mobile mt-4 w-full">
+                <label for="keyword" class="colorbase text-sm">Year</label>
+                <input required v-model="year" min="1950" placeholder="2010" type="number" name="year" class="p-2 leading-5 bgbase rounded-sm outline-none mr-4 w-2/3">
+                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchseason">suchen</button>
             </div>
-            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchseason">suchen</button>
         </form>
     </div>
 
@@ -73,18 +73,22 @@ body {
     <div class="h-1 w-full shadow-xl" id="resultunfiltered"></div>
 
     <div v-if="animedata.length > 0 && !error">
-        <ul class="flex flex-row justify-center w-full my-4">
-            <li @click="filterAnime(genre)" v-for="genre in currentGenre" :key="genre" class="filterbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
-                {{ genre }}
-            </li>
-            <li v-if="disableFilter" class="disabledbutton p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
-            <li @click="filtered = false; activeGenre = ''" class="accentbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
-        </ul>
+        <div v-if="!disableFilter" class="w-full my-4 flex flex-col justify-center items-center">
+            <label for="genre-select" class="coloraccentmetal text-sm font-semibold">Genres</label>
+            <select @change="filterAnime($event)" v-model="activeGenre" name="genre-select" id="genre-select" class="p-2 leading-5 coloraccentred rounded-sm border-2 borderaccentmetal outline-none w-2/3">
+                <option value="hint" selected class="coloraccentred">Select a genre to filter</option>
+                <option v-for="genre in currentGenre" :key="genre" :value="genre" class="filterbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
+                    {{ genre }}
+                </option>
+            </select>
+            <div @click="filtered = false; activeGenre = ''" class="accentbtn p-2 mt-4 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</div>
+        </div>
+        <div v-if="disableFilter" class="disabledbutton p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</div>
     </div>
 
     <div v-if="!loading && !filtered && animedata.length > 0 && !error">
-        <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+        <div class="flex flex-col flex-wrap justify-start items-center text-sm">
+            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
@@ -105,8 +109,8 @@ body {
         </div>
     </div>
     <div v-else-if="!loading && filtered && animedata.length > 0 && !error">
-        <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+        <div class="flex flex-col flex-wrap justify-start items-center text-sm">
+            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <img :src="item.image_url" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -144,11 +148,11 @@ import {
     useStore
 } from "vuex";
 
-import card from "./Card.vue"
+import cardmobile from "./CardMobile.vue"
 
 export default {
     components: {
-        card
+        cardmobile
     },
     setup() {
         const store = useStore()
@@ -161,7 +165,7 @@ export default {
         var errormsg = ref("");
         var error = ref(false);
         var filtered = ref(false);
-        var activeGenre = ref("");
+        var activeGenre = ref("hint");
         var detailId = ref("");
         var zoomIn = ref(false);
 
@@ -215,7 +219,9 @@ export default {
             });
         }
 
-        const filterAnime = (genre) => {
+        const filterAnime = (evt) => {
+            var genre = evt.target.value;
+
             if (disableFilter.value) {
                 return;
             }
@@ -227,7 +233,6 @@ export default {
             })
             filtered.value = true;
             filteredanimedata.value = temp;
-            activeGenre.value = genre;
         }
 
         const setLoadingStatus = () => {
