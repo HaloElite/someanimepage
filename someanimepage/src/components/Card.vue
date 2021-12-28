@@ -39,7 +39,7 @@
             </article>
             <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
                 <div class="w-1/2">
-                    <iframe width="420" height="315" :src="animeCloseUp.trailer_url" frameborder="0" allowfullscreen class="cardshadow">
+                    <iframe v-if="animeCloseUp.trailer_url" width="420" height="315" :src="animeCloseUp.trailer_url" frameborder="0" allowfullscreen class="cardshadow">
                     </iframe>
                 </div>
                 <p class="w-1/2 ml-2">

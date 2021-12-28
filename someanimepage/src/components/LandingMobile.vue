@@ -19,7 +19,6 @@ body {
 
 <template>
 <div class="bgbase w-screen fontbase max-w-2048 m-auto">
-
     <cardmobile v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
     <div class="bgaccentred h-v1/4 flex justify-center items-center">
