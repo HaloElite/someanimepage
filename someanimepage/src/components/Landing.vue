@@ -72,19 +72,23 @@ body {
 
     <div class="h-1 w-full shadow-xl" id="resultunfiltered"></div>
 
-    <div v-if="animedata.length > 0 && !error">
-        <ul class="flex flex-row justify-center w-full my-4">
-            <li @click="filterAnime(genre)" v-for="genre in currentGenre" :key="genre" class="filterbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
+    <div v-if="animedata.length > 0 && !error" class="px-8">
+        <ul class="flex flex-row justify-start flex-wrap w-full my-4">
+            <li @click="filterAnime(genre)" v-for="genre in currentGenre" :key="genre" class="filterbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
                 {{ genre }}
             </li>
-            <li v-if="disableFilter" class="disabledbutton p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
-            <li @click="filtered = false; activeGenre = ''" class="accentbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
+            <li v-if="disableFilter" class="disabledbutton p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
+            <li @click="filtered = false; activeGenre = ''" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
         </ul>
     </div>
 
     <div v-if="!loading && !filtered && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="(item, index) in animedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">{{ datelist[index]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[index]?.year }}</p>
+                </div>
                 <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
@@ -136,6 +140,7 @@ body {
 <script>
 import {
     ref,
+    reactive,
     computed,
     onMounted
 } from "vue";
@@ -161,6 +166,7 @@ export default {
         var errormsg = ref("");
         var error = ref(false);
         var filtered = ref(false);
+        var datelist = reactive([]);
         var activeGenre = ref("");
         var detailId = ref("");
         var zoomIn = ref(false);
@@ -173,6 +179,7 @@ export default {
                 store.commit('SET_RES', value);
             }
         });
+
         var filteredanimedata = computed({
             get() {
                 return store.getters['getfilteredres'];
@@ -212,6 +219,23 @@ export default {
                         }
                     });
                 }
+            });
+        }
+
+        const extractDates = async (animedata) => {
+            animedata.forEach(anime => {
+                var month = new Date(Date.parse(anime.airing_start)).toLocaleDateString('de-DE', {
+                    month: 'long'
+                });
+
+                var year = new Date(Date.parse(anime.airing_start)).toLocaleDateString('de-DE', {
+                    year: 'numeric',
+                });
+
+                datelist.push({
+                    year,
+                    month
+                });
             });
         }
 
@@ -320,11 +344,11 @@ export default {
                             if (response.status === 200 && response.data) {
                                 error.value = false;
 
-                                setLoadingStatus();
-
                                 disableFilter.value = false;
                                 animedata.value = response.data.anime;
                                 extractGenres(response.data.anime);
+                                extractDates(response.data.anime);
+                                setLoadingStatus();
                             }
                         })
                         .catch((error) => {
@@ -384,6 +408,7 @@ export default {
             disableFilter,
             detailId,
             zoomIn,
+            datelist,
             // Methods
             searchname,
             searchseason,

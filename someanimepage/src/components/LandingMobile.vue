@@ -19,7 +19,7 @@ body {
 
 <template>
 <div class="bgbase w-screen fontbase max-w-2048 m-auto">
-    <cardmobile v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
+    <cardMobile v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
     <div class="bgaccentred h-v1/4 flex justify-center items-center">
         <div class="flex flex-col justify-center items-center">
@@ -87,7 +87,11 @@ body {
 
     <div v-if="!loading && !filtered && animedata.length > 0 && !error">
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
-            <div v-for="(item) in animedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="(item, index) in animedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">{{ datelist[index]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[index]?.year }}</p>
+                </div>
                 <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
@@ -139,6 +143,7 @@ body {
 <script>
 import {
     ref,
+    reactive,
     computed,
     onMounted
 } from "vue";
@@ -147,11 +152,11 @@ import {
     useStore
 } from "vuex";
 
-import cardmobile from "./CardMobile.vue"
+import cardMobile from "./CardMobile.vue"
 
 export default {
     components: {
-        cardmobile
+        cardMobile
     },
     setup() {
         const store = useStore()
@@ -164,7 +169,8 @@ export default {
         var errormsg = ref("");
         var error = ref(false);
         var filtered = ref(false);
-        var activeGenre = ref("hint");
+        var datelist = reactive([]);
+        var activeGenre = ref("");
         var detailId = ref("");
         var zoomIn = ref(false);
 
@@ -176,6 +182,7 @@ export default {
                 store.commit('SET_RES', value);
             }
         });
+
         var filteredanimedata = computed({
             get() {
                 return store.getters['getfilteredres'];
@@ -218,9 +225,24 @@ export default {
             });
         }
 
-        const filterAnime = (evt) => {
-            var genre = evt.target.value;
+        const extractDates = async (animedata) => {
+            animedata.forEach(anime => {
+                var month = new Date(Date.parse(anime.airing_start)).toLocaleDateString('de-DE', {
+                    month: 'long'
+                });
 
+                var year = new Date(Date.parse(anime.airing_start)).toLocaleDateString('de-DE', {
+                    year: 'numeric',
+                });
+
+                datelist.push({
+                    year,
+                    month
+                });
+            });
+        }
+
+        const filterAnime = (genre) => {
             if (disableFilter.value) {
                 return;
             }
@@ -232,6 +254,7 @@ export default {
             })
             filtered.value = true;
             filteredanimedata.value = temp;
+            activeGenre.value = genre;
         }
 
         const setLoadingStatus = () => {
@@ -324,11 +347,11 @@ export default {
                             if (response.status === 200 && response.data) {
                                 error.value = false;
 
-                                setLoadingStatus();
-
                                 disableFilter.value = false;
                                 animedata.value = response.data.anime;
                                 extractGenres(response.data.anime);
+                                extractDates(response.data.anime);
+                                setLoadingStatus();
                             }
                         })
                         .catch((error) => {
@@ -388,6 +411,7 @@ export default {
             disableFilter,
             detailId,
             zoomIn,
+            datelist,
             // Methods
             searchname,
             searchseason,
