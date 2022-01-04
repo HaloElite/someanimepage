@@ -18,44 +18,50 @@
 
                 <p class="inline-block">
                     <span class="font-semibold coloraccentred inline-block">
-                        Genre:
+                        Genre:&#xa0;
                     </span>
                     <span v-for="(genre, index) in animeCloseUp.genres" :key="genre.mal_id" class="text-base mr-1">{{ genre.name }}<span v-if="index !== (animeCloseUp.genres.length - 1)">,</span>
                     </span>
                 </p>
             </article>
-            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-center">
-                <div class="w-1/2">
+            <article id="furtherinformation" class="border-b w-full borderaccentmetal p-6 flex flex-row flex-wrap items-stretch justify-center">
+                <div class="my-4">
                     <img :src="animeCloseUp.image_url" :alt="animeCloseUp.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive max-w-225 m-auto cardshadow">
                 </div>
-                <p class="w-1/2 mr-2 h-auto"><span class="font-semibold coloraccentred">Synopsis: </span>
-                    <span id="visible">
-                        {{ visiblepart }}
-                    </span>
-                    <span :class="{'hidden': !isHidden}">...</span> <button type="button" :class="{'hidden': !isHidden}" class="m-1 coloraccentred" @click="readmore">read more</button>
-                    <span :class="{'hidden': isHidden}">
-                        {{ hiddenpart }}
-                    </span></p>
-            </article>
-            <article id="details" class="border-b w-full borderaccentmetal p-6 flex flex-row justify-center items-start">
-                <div class="w-1/2">
+                <div class="w-1/3 min-w-250 m-4">
+                    <section id="partOne" class="py-4">
+                        <span class="font-semibold coloraccentred">
+                            Synopsis:
+                        </span>
+                        <span id="visible">
+                            {{ visiblepart }}
+                        </span>
+                        <span :class="{'hidden': !hideReadMore}">...</span> <button type="button" :class="{'hidden': !hideReadMore}" class="m-1 coloraccentred" @click="readmore">read more</button>
+                        <span :class="{'hidden': hideReadMore}">
+                            {{ hiddenpart }}
+                        </span>
+                    </section>
+                    <section id="partTwo" class="py-4">
+                        <span class="font-semibold coloraccentred">
+                            Related:
+                        </span>
+                        <template v-if="animeCloseUp.related?.length > 0">
+                            <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
+                                <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
+                                    <span class="font-semibold">Name:</span> {{ item.name }}
+                                    <span class="font-semibold">Type:</span> {{ item.type }}
+                                </p>
+                            </span>
+                        </template>
+                        <template v-else>
+                            <p class="text-base mr-1">Nothing related was found...</p>
+                        </template>
+                    </section>
+                </div>
+                <div class="my-4">
                     <iframe v-if="animeCloseUp.trailer_url" width="420" height="315" :src="animeCloseUp.trailer_url" frameborder="0" allowfullscreen class="cardshadow">
                     </iframe>
                 </div>
-                <p class="w-1/2 ml-2">
-                    <span class="font-semibold coloraccentred">Related:</span>
-                    <template v-if="animeCloseUp.related?.length > 0">
-                        <span v-for="(relatedstory, index) in animeCloseUp.related" :key="index" class="text-base mr-1">
-                            <p v-for="item in relatedstory" :key="item.mal_id" class="text-base mr-1">
-                                <span class="font-semibold">Name:</span> {{ item.name }}
-                                <span class="font-semibold">Type:</span> {{ item.type }}
-                            </p>
-                        </span>
-                    </template>
-                    <template v-else>
-                        <p class="text-base mr-1">Nothing related was found...</p>
-                    </template>
-                </p>
             </article>
         </section>
 
@@ -113,9 +119,9 @@ export default {
         }
 
         // Display more text
-        let isHidden = ref(true);
+        let hideReadMore = ref(true);
         const readmore = () => {
-            isHidden.value = !isHidden.value;
+            hideReadMore.value = !hideReadMore.value;
         }
 
         onMounted(() => {
@@ -125,7 +131,7 @@ export default {
                     if (response.status === 200 && response.data) {
                         animeCloseUp.value = response.data;
 
-                        if (response.data.synopsis.length > 800) {
+                        if (response.data.synopsis.length > 600) {
                             let substrings = response.data.synopsis.split(' ');
                             console.log(Math.round(substrings.length / 2));
 
@@ -145,6 +151,7 @@ export default {
                                 }
                             }
                         } else {
+                            hideReadMore.value = false;
                             visiblepart.value = response.data.synopsis;
                         }
                         console.log(visiblepart.value);
@@ -166,7 +173,7 @@ export default {
             shutcloseup,
             hiddenpart,
             visiblepart,
-            isHidden,
+            hideReadMore,
             // methods
             readmore
         }

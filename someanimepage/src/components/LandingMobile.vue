@@ -89,10 +89,11 @@ body {
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
             <div v-for="(item, index) in animedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">seit</p>
                     <p class="text-xs font-semibold">{{ datelist[index]?.month }}</p>
                     <p class="text-xs font-semibold">{{ datelist[index]?.year }}</p>
                 </div>
-                <img :src="item.image_url" :alt="item.mal_id" onerror="this.src='https://via.placeholder.com/225'" class="responsive">
+                <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
                         {{ item.title }}
@@ -114,7 +115,7 @@ body {
     <div v-else-if="!loading && filtered && animedata.length > 0 && !error">
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
             <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
-                <img :src="item.image_url" :alt="item.mal_id" class="responsive">
+                <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
                         {{ item.title }}
@@ -126,8 +127,8 @@ body {
             </div>
         </div>
     </div>
-    <div v-else-if="loading" class="flex flex-row flex-wrap justify-center items-center text-sm py-10 h-v1/3">
-        <div class="loader">
+    <div v-else-if="loading" class="text-sm w-full py-10 h-v1/3">
+        <div class="loader m-auto">
             <div class="bar1"></div>
             <div class="bar2"></div>
             <div class="bar3"></div>

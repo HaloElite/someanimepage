@@ -10,6 +10,7 @@
     "axios": "^0.24.0",
     "lodash": "^4.17.21",
     "vue": "^3.2.16",
+    "vue3-lazyload": "*",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"
   },
