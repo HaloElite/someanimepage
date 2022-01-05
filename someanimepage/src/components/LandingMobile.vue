@@ -243,19 +243,19 @@ export default {
             });
         }
 
-        const filterAnime = (genre) => {
+        const filterAnime = (e) => {
             if (disableFilter.value) {
                 return;
             }
             var temp = animedata.value.filter(anime => {
                 var temp_l = anime.genres.filter(check_genre => {
-                    return check_genre.name === genre;
+                    return check_genre.name === e.target.value;
                 });
                 return (temp_l.length > 0);
             })
             filtered.value = true;
             filteredanimedata.value = temp;
-            activeGenre.value = genre;
+            activeGenre.value = e.target.value;
         }
 
         const setLoadingStatus = () => {
