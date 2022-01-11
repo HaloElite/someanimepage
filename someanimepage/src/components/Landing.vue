@@ -73,8 +73,9 @@ body {
 
     <div v-if="animedata.length > 0 && !error" class="px-8">
         <ul class="flex flex-row justify-start flex-wrap w-full my-4">
+            {{currentGenre}}
             <li @click="filterAnime(genre)" v-for="genre in currentGenre" :key="genre" class="filterbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
-                {{ genre }}
+                <!-- {{ genre.name }} -->
             </li>
             <li v-if="disableFilter" class="disabledbutton p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
             <li @click="resetFilter('all')" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
@@ -159,14 +160,14 @@ import {
     useStore
 } from "vuex";
 
-import card from "./Card.vue"
+import card from "./Card.vue";
 
 export default {
     components: {
         card
     },
     setup() {
-        const store = useStore()
+        const store = useStore();
 
         // var animedata = ref();
         var keyword = ref("");
@@ -229,16 +230,6 @@ export default {
         });
 
         // -------------------------------------------------------------------------------------- Methods
-        const sort = (a, b) => {
-            console.log(a,b);
-            if (a < b) {
-                return -1;
-            }
-            if (a > b) {
-                return 1;
-            }
-            return 0;
-        }
 
         const extractGenres = async (animedata) => {
             store.commit('RESET_GENRE');
@@ -246,8 +237,16 @@ export default {
             animedata.forEach(anime => {
                 if (anime.genres.length) {
                     anime.genres.forEach(genre => {
-                        if (!currentGenre.value.includes(genre.name)) {
-                            currentGenre.value = genre.name;
+                        if (currentGenre.value.length === 0) {
+                            currentGenre.value.push(genre);
+                        } else {
+                            currentGenre.value.forEach(element => {
+                                console.log(element);
+                            //     console.log(element.mal_id, genre.mal_id);
+                            //     if (element.mal_id !== genre.mal_id) {
+                            //         currentGenre.value.push(genre);
+                            //     }
+                            });
                         }
                     });
                 }
@@ -292,18 +291,28 @@ export default {
                 return [];
             }
 
-            var temp = [];
-
             if (filteredanimedata.value.length > 0) {
-                // console.log(filteredanimedata.value);
-                for (let index = 0; index < filteredanimedata.value.length - 1; index++) {
-                    temp.push(sort(filteredanimedata.value[index].title, filteredanimedata.value[index + 1].title));
-                }
+                var sorted = [];
+                console.log(`https://api.jikan.moe/v3/search/anime?q=${keyword.value}&genre=${activeGenre.value}&order_by=${category}&sort=desc`);
+                axios
+                    .get(`https://api.jikan.moe/v3/search/anime?q=${keyword.value}&genre=${activeGenre.value}&order_by=${category}&sort=desc`)
+                    .then((response) => {
+                        console.log(response.data);
+                        if (response.status === 200 && response.data) {
+                            error.value = false;
+                            setLoadingStatus();
+                            subfilteredanimedata.value = response.data.results;
+                        }
+                    })
+                    .catch((error) => {
+                        error.value = true;
+                        loading.value = false;
+                    });
+
+                console.log(sorted);
+                filtered.value = true;
+                activeSubFilter.value = category;
             }
-            console.log(temp);
-            filtered.value = true;
-            subfilteredanimedata.value = temp;
-            activeSubFilter.value = category;
         }
 
         const resetFilter = (variant) => {
