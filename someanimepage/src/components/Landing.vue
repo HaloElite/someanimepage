@@ -77,7 +77,17 @@ body {
                 {{ genre }}
             </li>
             <li v-if="disableFilter" class="disabledbutton p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
-            <li @click="filtered = false; activeGenre = ''" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
+            <li @click="resetFilter('all')" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
+        </ul>
+
+        <ul class="flex flex-row justify-start flex-wrap w-full my-4">
+            <li @click="subFilterAnime('date')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'date')}">
+                Release Date
+            </li>
+            <li @click="subFilterAnime('name')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
+                Name
+            </li>
+            <li @click="resetFilter('sub')" class="accentbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetvariantbutton': disableFilter}">reset</li>
         </ul>
     </div>
 
@@ -166,8 +176,10 @@ export default {
         var errormsg = ref("");
         var error = ref(false);
         var filtered = ref(false);
+        var subfiltered = ref(false);
         var datelist = reactive([]);
         var activeGenre = ref("");
+        var activeSubFilter = ref("");
         var detailId = ref("");
         var zoomIn = ref(false);
 
@@ -186,6 +198,15 @@ export default {
             },
             set(value) {
                 store.commit('SET_FILTERED_RES', value);
+            }
+        });
+
+        var subfilteredanimedata = computed({
+            get() {
+                return store.getters['getfilteredSubres'];
+            },
+            set(value) {
+                store.commit('SET_FILTERED_SUB_RES', value);
             }
         });
 
@@ -208,6 +229,17 @@ export default {
         });
 
         // -------------------------------------------------------------------------------------- Methods
+        const sort = (a, b) => {
+            console.log(a,b);
+            if (a < b) {
+                return -1;
+            }
+            if (a > b) {
+                return 1;
+            }
+            return 0;
+        }
+
         const extractGenres = async (animedata) => {
             store.commit('RESET_GENRE');
 
@@ -243,6 +275,7 @@ export default {
             if (disableFilter.value) {
                 return;
             }
+
             var temp = animedata.value.filter(anime => {
                 var temp_l = anime.genres.filter(check_genre => {
                     return check_genre.name === genre;
@@ -252,6 +285,37 @@ export default {
             filtered.value = true;
             filteredanimedata.value = temp;
             activeGenre.value = genre;
+        }
+
+        const subFilterAnime = (category) => {
+            if (disableFilter.value) {
+                return [];
+            }
+
+            var temp = [];
+
+            if (filteredanimedata.value.length > 0) {
+                // console.log(filteredanimedata.value);
+                for (let index = 0; index < filteredanimedata.value.length - 1; index++) {
+                    temp.push(sort(filteredanimedata.value[index].title, filteredanimedata.value[index + 1].title));
+                }
+            }
+            console.log(temp);
+            filtered.value = true;
+            subfilteredanimedata.value = temp;
+            activeSubFilter.value = category;
+        }
+
+        const resetFilter = (variant) => {
+            if (variant === 'all') {
+                filtered.value = false;
+                activeGenre.value = '';
+                filteredanimedata.value = [];
+            } else if (variant === 'sub') {
+                subfiltered.value = false;
+                activeSubFilter.value = '';
+                subfilteredanimedata.value = [];
+            }
         }
 
         const setLoadingStatus = () => {
@@ -405,6 +469,7 @@ export default {
             error,
             filtered,
             activeGenre,
+            activeSubFilter,
             disableFilter,
             detailId,
             zoomIn,
@@ -412,7 +477,9 @@ export default {
             // Methods
             searchname,
             searchseason,
-            filterAnime
+            filterAnime,
+            subFilterAnime,
+            resetFilter
         };
     },
 };

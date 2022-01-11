@@ -9,6 +9,7 @@ const store = createStore({
     return {
       result: [],
       filteredResult: [],
+      filteredSUbResult: [],
       currentGenre: [],
       disableFilter: false,
     }
@@ -19,6 +20,9 @@ const store = createStore({
     },
     getfilteredres (state) {
       return state.filteredResult;
+    },
+    getfilteredSubres (state) {
+      return state.filteredSUbResult;
     },
     getgenre (state) {
       return state.currentGenre;
@@ -33,6 +37,9 @@ const store = createStore({
     },
     SET_FILTERED_RES (state, data) {
       state.filteredResult = cloneDeep(data);
+    },
+    SET_FILTERED_SUB_RES (state, data) {
+      state.filteredSUbResult = cloneDeep(data);
     },
     SET_GENRE (state, data) {
       state.currentGenre.push(data);
