@@ -73,26 +73,25 @@ body {
 
     <div v-if="animedata.length > 0 && !error" class="px-8">
         <ul class="flex flex-row justify-start flex-wrap w-full my-4">
-            {{currentGenre}}
-            <li @click="filterAnime(genre)" v-for="genre in currentGenre" :key="genre" class="filterbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
-                <!-- {{ genre.name }} -->
+            <li @click="filterAnime(genre.name, genre.mal_id)" v-for="genre in currentGenre" :key="genre.mal_id" class="filterbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre.mal_id)}">
+                {{ genre.name }}
             </li>
             <li v-if="disableFilter" class="disabledbutton p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
             <li @click="resetFilter('all')" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
         </ul>
 
         <ul class="flex flex-row justify-start flex-wrap w-full my-4">
-            <li @click="subFilterAnime('date')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'date')}">
+            <li @click="subFilterAnime('start_date')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'start_date')}">
                 Release Date
             </li>
-            <li @click="subFilterAnime('name')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
+            <li @click="subFilterAnime('title')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
                 Name
             </li>
             <li @click="resetFilter('sub')" class="accentbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetvariantbutton': disableFilter}">reset</li>
         </ul>
     </div>
 
-    <div v-if="!loading && !filtered && animedata.length > 0 && !error">
+    <div v-if="!loading && filtered === '' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
             <div v-for="(item, index) in animedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
@@ -119,9 +118,24 @@ body {
             </div>
         </div>
     </div>
-    <div v-else-if="!loading && filtered && animedata.length > 0 && !error">
+    <div v-else-if="!loading && filtered === 'genre' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelistfiltered w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
+                <div class="p-4 min-h-150 transition">
+                    <h1 class="font-semibold text-2xl coloraccentmetal py-4">
+                        {{ item.title }}
+                    </h1>
+                    <p class="coloraccentmetal">
+                        {{ item.synopsis }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-else-if="!loading && filtered === 'sub' && animedata.length > 0 && !error">
+        <div class="flex flex-row flex-wrap justify-center items-start text-sm">
+            <div v-for="(item) in subfilteredanimedata" :key="item.mal_id" class="animatelistfiltered w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -160,6 +174,11 @@ import {
     useStore
 } from "vuex";
 
+import {
+    sortObjectArrayByName,
+    sortObjectArrayByStartDate
+} from '../services/sortObjectArray.js'
+
 import card from "./Card.vue";
 
 export default {
@@ -176,8 +195,7 @@ export default {
         var loading = ref(false);
         var errormsg = ref("");
         var error = ref(false);
-        var filtered = ref(false);
-        var subfiltered = ref(false);
+        var filtered = ref("");
         var datelist = reactive([]);
         var activeGenre = ref("");
         var activeSubFilter = ref("");
@@ -233,24 +251,25 @@ export default {
 
         const extractGenres = async (animedata) => {
             store.commit('RESET_GENRE');
+            var tempgnr = [];
 
             animedata.forEach(anime => {
                 if (anime.genres.length) {
                     anime.genres.forEach(genre => {
-                        if (currentGenre.value.length === 0) {
-                            currentGenre.value.push(genre);
-                        } else {
-                            currentGenre.value.forEach(element => {
-                                console.log(element);
-                            //     console.log(element.mal_id, genre.mal_id);
-                            //     if (element.mal_id !== genre.mal_id) {
-                            //         currentGenre.value.push(genre);
-                            //     }
-                            });
-                        }
+                        tempgnr.push(genre);
                     });
                 }
+
             });
+
+            var seen = {};
+            var temp = tempgnr.filter((genre) => {
+                return seen.hasOwnProperty(genre.mal_id) ? false : (seen[genre.mal_id] = true);
+            });
+
+            currentGenre.value = [];
+            currentGenre.value.length = 0;
+            currentGenre.value = temp;
         }
 
         const extractDates = async (animedata) => {
@@ -270,7 +289,7 @@ export default {
             });
         }
 
-        const filterAnime = (genre) => {
+        const filterAnime = (genre, mal_id) => {
             if (disableFilter.value) {
                 return;
             }
@@ -281,49 +300,50 @@ export default {
                 });
                 return (temp_l.length > 0);
             })
-            filtered.value = true;
+            filtered.value = "genre";
+            activeSubFilter.value = "";
             filteredanimedata.value = temp;
-            activeGenre.value = genre;
+            activeGenre.value = mal_id;
         }
 
         const subFilterAnime = (category) => {
             if (disableFilter.value) {
                 return [];
             }
+            filtered.value = "sub";
 
-            if (filteredanimedata.value.length > 0) {
-                var sorted = [];
-                console.log(`https://api.jikan.moe/v3/search/anime?q=${keyword.value}&genre=${activeGenre.value}&order_by=${category}&sort=desc`);
-                axios
-                    .get(`https://api.jikan.moe/v3/search/anime?q=${keyword.value}&genre=${activeGenre.value}&order_by=${category}&sort=desc`)
-                    .then((response) => {
-                        console.log(response.data);
-                        if (response.status === 200 && response.data) {
-                            error.value = false;
-                            setLoadingStatus();
-                            subfilteredanimedata.value = response.data.results;
-                        }
-                    })
-                    .catch((error) => {
-                        error.value = true;
-                        loading.value = false;
-                    });
+            if (filteredanimedata.value.length > 0 && category === "title") {
+                activeSubFilter.value = "name";
+                subfilteredanimedata.value = sortObjectArrayByName(filteredanimedata.value, "asc")
+            } else if (animedata.value.length > 0 && category === "title") {
+                activeSubFilter.value = "name";
+                subfilteredanimedata.value = sortObjectArrayByName(animedata.value, "asc")
+            }
 
-                console.log(sorted);
-                filtered.value = true;
-                activeSubFilter.value = category;
+            if (filteredanimedata.value.length > 0 && category === "start_date") {
+                activeSubFilter.value = "start_date";
+                subfilteredanimedata.value = sortObjectArrayByStartDate(filteredanimedata.value, "asc")
+            } else if (animedata.value.length > 0 && category === "start_date") {
+                activeSubFilter.value = "start_date";
+                subfilteredanimedata.value = sortObjectArrayByStartDate(animedata.value, "asc")
             }
         }
 
         const resetFilter = (variant) => {
             if (variant === 'all') {
-                filtered.value = false;
-                activeGenre.value = '';
+                filtered.value = "";
+                activeGenre.value = "";
+                activeSubFilter.value = "";
                 filteredanimedata.value = [];
-            } else if (variant === 'sub') {
-                subfiltered.value = false;
-                activeSubFilter.value = '';
                 subfilteredanimedata.value = [];
+            } else if (filtered.value === "sub" && filteredanimedata.value.length > 0) {
+                subfilteredanimedata.value = [];
+                activeSubFilter.value = "";
+                filtered.value = "genre";
+            } else if (filtered.value === "sub" && animedata.value.length > 0) {
+                subfilteredanimedata.value = [];
+                activeSubFilter.value = "";
+                filtered.value = "";
             }
         }
 
@@ -340,6 +360,8 @@ export default {
         const searchname = () => {
             new Promise((resolve) => {
                     var oldlist = document.getElementsByClassName("animatelist");
+                    var oldlist2 = document.getElementsByClassName("animatelistfiltered");
+                    resetFilter("all");
 
                     if (oldlist.length) {
                         for (let i = 0; i < 25; i++) {
@@ -348,9 +370,16 @@ export default {
                             }
                         }
 
-                        oldlist[0].onanimationend = () => {
-                            loading.value = true;
-                            resolve();
+                        if (filtered) {
+                            oldlist[0].onanimationend = () => {
+                                loading.value = true;
+                                resolve();
+                            }
+                        } else if (!filtered) {
+                            oldlist2[0].onanimationend = () => {
+                                loading.value = true;
+                                resolve();
+                            }
                         }
                     } else {
                         loading.value = true;
@@ -371,18 +400,6 @@ export default {
                         .catch((error) => {
                             error.value = true;
                             loading.value = false;
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                console.log(error.response.status);
-                                console.log(error.response.headers);
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                            }
                         });
                 })
                 .catch(err => {
@@ -428,23 +445,9 @@ export default {
                             error.value = true;
                             loading.value = false;
                             errormsg = "Ups, da ist etwas schief gelaufen...";
-
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                console.log(error.response.status);
-                                console.log(error.response.headers);
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                            }
                         });
                 })
                 .catch(err => {
-                    console.log(err);
                     loading.value = false;
                 });
 
@@ -469,6 +472,7 @@ export default {
         return {
             animedata,
             filteredanimedata,
+            subfilteredanimedata,
             keyword,
             currentGenre,
             season,

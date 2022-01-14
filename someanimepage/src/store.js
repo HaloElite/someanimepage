@@ -42,7 +42,7 @@ const store = createStore({
       state.filteredSUbResult = cloneDeep(data);
     },
     SET_GENRE (state, data) {
-      state.currentGenre.push(data);
+      state.currentGenre = cloneDeep(data);
     },
     RESET_GENRE(state) {
       state.currentGenre.length = 0;

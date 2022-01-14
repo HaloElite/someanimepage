@@ -18,7 +18,6 @@ export default {
         var screenwidth = ref(window.innerWidth);
 
         window.addEventListener("resize", () => {
-            console.log("test");
             screenwidth.value = window.innerWidth;
         });
 
