@@ -35,7 +35,7 @@ body {
             <div class="form-group-mobile w-full">
                 <label for="keyword" class="colorbase text-sm">Name</label>
                 <input required v-model="keyword" type="text" name="keyword" placeholder="Kimi No Iru Machi" class="p-2 leading-5 bgbase rounded-sm outline-none mr-4 w-2/3">
-                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchname">suchen</button>
+                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchname">search</button>
             </div>
 
         </form>
@@ -54,7 +54,7 @@ body {
             <div class="form-group-mobile mt-4 w-full">
                 <label for="keyword" class="colorbase text-sm">Year</label>
                 <input required v-model="year" min="1950" placeholder="2010" type="number" name="year" class="p-2 leading-5 bgbase rounded-sm outline-none mr-4 w-2/3">
-                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchseason">suchen</button>
+                <button type="submit" class="accentbtn p-2 leading-5 rounded-sm outline-none border borderaccentred cursor-pointer w-1/4" @click="searchseason">search</button>
             </div>
         </form>
     </div>
@@ -75,7 +75,7 @@ body {
         <div v-if="!disableFilter" class="flex flex-row justify-center items-center my-1">
             <select @change="filterAnime($event)" v-model="activeGenre" name="genre-select" id="genre-select" class="p-2 leading-5 rounded-sm border-2 borderaccentmetal outline-none w-2/3">
                 <option value="" disabled selected class="coloraccentmetal">Filter genre</option>
-                <option v-for="(genre, index) in currentGenre" :key="genre" :value="index" class="coloraccentmetal p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
+                <option v-for="genre in currentGenre" :key="genre" :value="genre.mal_id" class="coloraccentmetal p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
                     {{ genre.name }}
                 </option>
             </select>
@@ -98,11 +98,11 @@ body {
 
     <div v-if="!loading && filtered === '' && animedata.length > 0 && !error">
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
-            <div v-for="(item, index) in animedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in animedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
-                    <p class="text-xs font-semibold">seit</p>
-                    <p class="text-xs font-semibold">{{ datelist[index]?.month }}</p>
-                    <p class="text-xs font-semibold">{{ datelist[index]?.year }}</p>
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
                 </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
@@ -125,7 +125,12 @@ body {
     </div>
     <div v-else-if="!loading && filtered === 'genre' && animedata.length > 0 && !error">
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in filteredanimedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
+                </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -140,7 +145,12 @@ body {
     </div>
     <div v-else-if="!loading && filtered === 'sub' && animedata.length > 0 && !error">
         <div class="flex flex-col flex-wrap justify-start items-center text-sm">
-            <div v-for="(item) in subfilteredanimedata" :key="item.mal_id" class="animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in subfilteredanimedata" :key="item.mal_id" class="relative animatelist w-full max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
+                </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -287,10 +297,10 @@ export default {
                     year: 'numeric',
                 });
 
-                datelist.push({
+                datelist[anime.mal_id] = {
                     year,
                     month
-                });
+                };
             });
         }
 
@@ -299,9 +309,10 @@ export default {
                 return;
             }
 
+            var idx = currentGenre.value.findIndex(el => el.mal_id === parseInt(e.target.value));
             var temp = animedata.value.filter(anime => {
                 var temp_l = anime.genres.filter(check_genre => {
-                    return check_genre.name === currentGenre.value[e.target.value].name;
+                    return check_genre.name === currentGenre.value[idx].name;
                 });
                 return (temp_l.length > 0);
             })
@@ -309,7 +320,7 @@ export default {
             filtered.value = "genre";
             activeSubFilter.value = "";
             filteredanimedata.value = temp;
-            activeGenre.value = currentGenre.value[e.target.value].mal_id;
+            activeGenre.value = currentGenre.value[idx].mal_id;
         }
 
         const subFilterAnime = (category) => {
@@ -333,8 +344,6 @@ export default {
                 activeSubFilter.value = "start_date";
                 subfilteredanimedata.value = sortObjectArrayByStartDate(animedata.value, "asc")
             }
-
-            console.log(subfilteredanimedata.value);
         }
 
         const resetFilter = (variant) => {

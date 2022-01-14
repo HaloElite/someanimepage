@@ -37,7 +37,7 @@ body {
                 <input required v-model="keyword" type="text" name="keyword" placeholder="Kimi No Iru Machi" class="py-2 px-4 leading-5 bgbase rounded-sm border-2 borderaccentred outline-none">
             </div>
 
-            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchname">suchen</button>
+            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchname">search</button>
         </form>
 
         <form @submit.prevent class="flex flex-row justify-center items-center w-1/3 m-auto p-10 rounded-3xl bgbase shadow-lg mb-6">
@@ -55,7 +55,7 @@ body {
                 <label for="keyword" class="coloraccentred">Year</label>
                 <input required v-model="year" min="1950" placeholder="2010" type="number" name="year" class="py-2 px-4 leading-5 bgbase rounded-sm border-2 borderaccentred outline-none">
             </div>
-            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchseason">suchen</button>
+            <button type="submit" class="accentbtn ml-4 py-2 px-4 leading-5 rounded-sm border-2 outline-none cursor-pointer" @click="searchseason">search</button>
         </form>
     </div>
 
@@ -93,11 +93,11 @@ body {
 
     <div v-if="!loading && filtered === '' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item, index) in animedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in animedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
                 <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
-                    <p class="text-xs font-semibold">seit</p>
-                    <p class="text-xs font-semibold">{{ datelist[index]?.month }}</p>
-                    <p class="text-xs font-semibold">{{ datelist[index]?.year }}</p>
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
                 </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
@@ -120,7 +120,12 @@ body {
     </div>
     <div v-else-if="!loading && filtered === 'genre' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in filteredanimedata" :key="item.mal_id" class="animatelistfiltered w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in filteredanimedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
+                </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -135,7 +140,12 @@ body {
     </div>
     <div v-else-if="!loading && filtered === 'sub' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
-            <div v-for="(item) in subfilteredanimedata" :key="item.mal_id" class="animatelistfiltered w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+            <div v-for="item in subfilteredanimedata" :key="item.mal_id" class="animatelist relative w-1/6 max-w-225 max-h-3/4 my-6 mx-10 pb-2 bgbase overflow-y-auto rounded-3xl shadow-lg" @click="detailId = item.mal_id; zoomIn = true">
+                <div class="absolute right-0 top-0 rounded-bl-lg p-1 bgbase max-w-50 text-center">
+                    <p class="text-xs font-semibold">since</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.month }}</p>
+                    <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
+                </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
                 <div class="p-4 min-h-150 transition">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
@@ -282,10 +292,10 @@ export default {
                     year: 'numeric',
                 });
 
-                datelist.push({
+                datelist[anime.mal_id] = {
                     year,
                     month
-                });
+                };
             });
         }
 
