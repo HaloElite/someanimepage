@@ -71,29 +71,28 @@ body {
 
     <div class="h-1 w-full shadow-xl" id="resultunfiltered"></div>
 
-    <div v-if="animedata.length > 0 && !error">
-        <label for="genre-select" class="coloraccentmetal text-sm font-semibold">Genres</label>
-        <div v-if="!disableFilter" class="w-full my-4 flex flex-row justify-center items-center">
-            <select @change="filterAnime($event)" v-model="activeGenre" name="genre-select" id="genre-select" class="p-2 leading-5 coloraccentred rounded-sm border-2 borderaccentmetal outline-none w-2/3">
-                <option value="" disabled selected class="coloraccentred">Select a genre to filter</option>
-                <option v-for="(genre, index) in currentGenre" :key="genre" :value="index" class="filterbtn p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
+    <div v-if="animedata.length > 0 && !error" class="px-8">
+        <div v-if="!disableFilter" class="flex flex-row justify-center items-center my-1">
+            <select @change="filterAnime($event)" v-model="activeGenre" name="genre-select" id="genre-select" class="p-2 leading-5 rounded-sm border-2 borderaccentmetal outline-none w-2/3">
+                <option value="" disabled selected class="coloraccentmetal">Filter genre</option>
+                <option v-for="(genre, index) in currentGenre" :key="genre" :value="index" class="coloraccentmetal p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre)}">
                     {{ genre.name }}
                 </option>
             </select>
-            <div @click="resetFilter('all')" class="accentbtn ml-2 p-2 rounded-sm outline-none border-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</div>
+            <div @click="resetFilter('all')" class="w-1/3  text-center accentbtn ml-2 p-2 rounded-sm outline-none border-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</div>
         </div>
         <div v-if="disableFilter" class="disabledbutton p-2 mx-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</div>
     </div>
 
     <div v-if="animedata.length > 0 && !error" class="px-8">
-        <ul class="flex flex-row justify-start flex-wrap w-full my-4">
-            <li @click="subFilterAnime('start_date')" class="w-full text-center filterbtnVariant p-1 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'start_date')}">
+        <ul class="flex flex-row justify-center flex-wrap w-full">
+            <li @click="subFilterAnime('start_date')" class="w-full text-center filterbtnVariant p-1 my-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'start_date')}">
                 Release Date
             </li>
-            <li @click="subFilterAnime('title')" class="w-full text-center filterbtnVariant p-1 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
+            <li @click="subFilterAnime('title')" class="w-full text-center filterbtnVariant p-1 my-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
                 Name
             </li>
-            <li @click="resetFilter('sub')" class="w-full text-center accentbtnVariant p-1 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetvariantbutton': disableFilter}">reset</li>
+            <li @click="resetFilter('sub')" class="w-full text-center accentbtnVariant p-1 my-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetvariantbutton': disableFilter}">reset</li>
         </ul>
     </div>
 
