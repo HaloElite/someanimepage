@@ -19,6 +19,7 @@ body {
 
 <template>
 <div class="bgbase w-screen fontbase max-w-2048 m-auto">
+    <characteroftheday></characteroftheday>
     <card v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
     <div class="bghero bgbase h-v3/4 min-h-500 flex justify-center items-center">
@@ -71,25 +72,7 @@ body {
 
     <div class="h-1 w-full shadow-xl" id="resultunfiltered"></div>
 
-    <div v-if="animedata.length > 0 && !error" class="px-8">
-        <ul class="flex flex-row justify-start flex-wrap w-full my-4">
-            <li @click="filterAnime(genre.name, genre.mal_id)" v-for="genre in currentGenre" :key="genre.mal_id" class="filterbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledbutton': disableFilter, 'accentbtn': (activeGenre === genre.mal_id)}">
-                {{ genre.name }}
-            </li>
-            <li v-if="disableFilter" class="disabledbutton p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium">No genres available</li>
-            <li @click="resetFilter('all')" class="accentbtn p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetbutton': disableFilter}">reset</li>
-        </ul>
-
-        <ul class="flex flex-row justify-start flex-wrap w-full my-4">
-            <li @click="subFilterAnime('start_date')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'start_date')}">
-                Release Date
-            </li>
-            <li @click="subFilterAnime('title')" class="filterbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'accentbtnVariant': (activeSubFilter === 'name')}">
-                Name
-            </li>
-            <li @click="resetFilter('sub')" class="accentbtnVariant p-2 m-1 rounded-sm border-2 outline-none cursor-pointer font-medium" :class="{'disabledresetvariantbutton': disableFilter}">reset</li>
-        </ul>
-    </div>
+    <genrepicker v-if="animedata.length > 0 && !error" @filterAnimeEmit="filterAnime" @subFilterAnimeEmit="subFilterAnime" @resetFilterEmit="resetFilter" :currentGenreProp="currentGenre" :activeGenreProp="activeGenre" :activeSubFilterProp="activeSubFilter" :disableFilterProp="disableFilter"></genrepicker>
 
     <div v-if="!loading && filtered === '' && animedata.length > 0 && !error">
         <div class="flex flex-row flex-wrap justify-center items-start text-sm">
@@ -190,10 +173,15 @@ import {
 } from '../services/sortObjectArray.js'
 
 import card from "./Card.vue";
+import genrepicker from "./GenrePicker.vue";
+
+import characteroftheday from "./CharacterOfTheDay.vue";
 
 export default {
     components: {
-        card
+        card,
+        genrepicker,
+        characteroftheday
     },
     setup() {
         const store = useStore();
@@ -207,7 +195,7 @@ export default {
         var error = ref(false);
         var filtered = ref("");
         var datelist = reactive([]);
-        var activeGenre = ref("");
+        var activeGenre = ref(NaN);
         var activeSubFilter = ref("");
         var detailId = ref("");
         var zoomIn = ref(false);
@@ -342,7 +330,7 @@ export default {
         const resetFilter = (variant) => {
             if (variant === 'all') {
                 filtered.value = "";
-                activeGenre.value = "";
+                activeGenre.value = NaN;
                 activeSubFilter.value = "";
                 filteredanimedata.value = [];
                 subfilteredanimedata.value = [];
@@ -361,8 +349,8 @@ export default {
             if (loading.value) {
                 setTimeout(() => {
                     loading.value = false;
-                    document.location.hash = "";
-                    document.location.hash = "#resultunfiltered";
+                    // document.location.hash = "";
+                    // document.location.hash = "#resultunfiltered";
                 }, 250);
             }
         }
