@@ -34,6 +34,38 @@
   }
 }
 
+
+.animatecharacterin {
+  animation-duration: 1s;
+  animation-name: popin;
+}
+
+.animatecharacterout {
+  animation-duration: 1s;
+  animation-name: popout;
+}
+
+@keyframes popin {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popout {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+
 // -------------------------------------------------------- LOADER -------------------------------------------------
 
 .loader {

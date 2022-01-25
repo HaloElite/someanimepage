@@ -105,7 +105,7 @@ body {
                     <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
                 </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
-                <div class="p-4 min-h-150 transition">
+                <div class="p-4 min-h-150">
                     <h1 class="font-semibold text-2xl coloraccentmetal pt-4">
                         {{ item.title }}
                     </h1>
@@ -132,7 +132,7 @@ body {
                     <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
                 </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
-                <div class="p-4 min-h-150 transition">
+                <div class="p-4 min-h-150">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
                         {{ item.title }}
                     </h1>
@@ -152,7 +152,7 @@ body {
                     <p class="text-xs font-semibold">{{ datelist[item.mal_id]?.year }}</p>
                 </div>
                 <img v-lazy="{src: item.image_url, loading: 'https://via.placeholder.com/225', error: 'https://via.placeholder.com/225'}" :alt="item.mal_id" class="responsive">
-                <div class="p-4 min-h-150 transition">
+                <div class="p-4 min-h-150">
                     <h1 class="font-semibold text-2xl coloraccentmetal py-4">
                         {{ item.title }}
                     </h1>
@@ -428,6 +428,7 @@ export default {
         const searchseason = () => {
             new Promise((resolve) => {
                     var oldlist = document.getElementsByClassName("animatelist");
+                    resetFilter("all");
 
                     if (oldlist.length) {
                         for (let i = 0; i < 25; i++) {
