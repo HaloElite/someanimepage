@@ -18,7 +18,7 @@ body {
 </style>
 
 <template>
-<div class="bgbase w-screen fontbase max-w-2048 m-auto">
+<div class="bgbaseDark w-screen fontbase max-w-2048 m-auto">
     <cardMobile v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
     <div class="bgaccentred h-v1/4 flex justify-center items-center">
@@ -472,6 +472,8 @@ export default {
         }
 
         onMounted(() => {
+            document.title = "Find some Anime!";
+
             const month = new Date().getMonth();
             year.value = new Date().getFullYear();
 

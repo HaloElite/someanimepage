@@ -18,7 +18,7 @@ body {
 </style>
 
 <template>
-<div class="bgbase w-screen fontbase max-w-2048 m-auto">
+<div class="bgbaseDark w-screen fontbase max-w-2048 m-auto">
     <characteroftheday></characteroftheday>
     <card v-if="zoomIn" :anime_id="detailId" @zoomOut="zoomIn = false" />
 
@@ -31,7 +31,7 @@ body {
         </div>
     </div>
 
-    <div class="w-full flex flex-row justify-center items-center">
+    <div class="w-full shadowmain flex flex-row justify-center items-center pt-8">
         <form @submit.prevent class="flex flex-row justify-center items-center w-1/4 m-auto p-10 rounded-3xl bgbase shadow-lg mb-6">
             <div class="form-group">
                 <label for="keyword" class="coloraccentred">Name</label>
@@ -162,10 +162,10 @@ import {
     computed,
     onMounted
 } from "vue";
-import axios from "axios";
 import {
     useStore
 } from "vuex";
+import axios from "axios";
 
 import {
     sortObjectArrayByName,
@@ -453,6 +453,8 @@ export default {
         }
 
         onMounted(() => {
+            document.title = "Find some Anime!";
+
             const month = new Date().getMonth();
             year.value = new Date().getFullYear();
 

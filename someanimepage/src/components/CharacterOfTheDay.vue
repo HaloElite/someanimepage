@@ -9,7 +9,8 @@
 
 <template>
 <div id="characterview" class="fixedTopLeft animatecharacterin bgbase fontbase coloraccentmetal w-1/4 h-1/2 overflow-y-auto rounded-md shadow-lg" v-if="!isEmpty(characterData) && toggledElement">
-    <div class="w-full flex flex-row justify-end p-2 mb-2 bgaccentblack">
+    <div class="w-full flex flex-row justify-between p-2 mb-2 bgaccentblack">
+        <p class="colorbase text-lg">Character of the day</p>
         <button @click="toggleview($event)" class="filterbtn p-1 rounded-md">close</button>
     </div>
     <div class="w-full p-2 h-full overflow-y-auto overflow-hidden">
@@ -28,7 +29,6 @@
 <script>
 import {
     onMounted,
-    reactive,
     ref
 } from "vue";
 import axios from "axios";
@@ -65,12 +65,11 @@ export default {
                 .get(`https://api.jikan.moe/v3/character/${random}`)
                 .then((response) => {
                     if (response.status === 200 && response.data) {
-                        console.log(response.data);
                         characterData.value = response.data;
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    return;
                 });
         });
 

@@ -1,48 +1,52 @@
 @use "../variables";
 
 .filterbtn:hover {
+  background-color: variables.$base;
+  color: variables.$accentred;
+  border-color: variables.$base;
+}
+
+
+.filterbtn {
   background-color: variables.$accentred;
   color: variables.$base;
+  border-color: variables.$accentred;
 }
 
 .filterbtnVariant:hover {
-  background-color: variables.$accentyellow;
-  color: variables.$base;
-}
-
-.filterbtn {
   background-color: variables.$base;
-  color: variables.$accentred;
-  border-color: variables.$accentred;
+  color: darken(variables.$accentyellow, 17.5%);
+  border-color: variables.$base;
 }
 
 .filterbtnVariant {
-  background-color: variables.$base;
-  color: variables.$accentyellow;
-  border-color: variables.$accentyellow;
+  background-color: darken(variables.$accentyellow, 17.5%);
+  color: variables.$base;
+  border-color: darken(variables.$accentyellow, 17.5%);
 }
 
 .accentbtn:hover {
-  background-color: darken(variables.$accentred, 17.5%);
-  border-color: darken(variables.$accentred, 17.5%);
-}
-
-.accentbtn {
   background-color: variables.$accentred;
   color: variables.$base;
   border-color: variables.$accentred;
+}
+
+.accentbtn {
+  background-color: variables.$base;
+  color: variables.$accentred;
+  border-color: variables.$base;
 }
 
 .accentbtnVariant:hover {
   background-color: darken(variables.$accentyellow, 17.5%);
+  color: variables.$base;
   border-color: darken(variables.$accentyellow, 17.5%);
 }
 
-
 .accentbtnVariant {
-  background-color: variables.$accentyellow;
-  color: variables.$base;
-  border-color: variables.$accentyellow;
+  background-color: variables.$base;
+  color: darken(variables.$accentyellow, 17.5%);
+  border-color: variables.$base;
 }
 
 .disabledbutton {

@@ -11,8 +11,12 @@
   scrollbar-width: none; /* Firefox */
 }
 
+.bgbaseDark {
+  background-color: lighten(variables.$accentblack, 0);
+}
+
 .bgbase {
-  background-color: variables.$base;
+  background-color:  variables.$base;
 }
 
 .bgaccentred {
@@ -52,4 +56,10 @@
   box-shadow: 0px 15px 30px -18px variables.$accentmetal;
   -webkit-box-shadow: 0px 15px 30px -18px variables.$accentmetal;
   -moz-box-shadow: 0px 15px 30px -18px variables.$accentmetal;
+}
+
+.shadowmain {
+  box-shadow: 0px -1px 10px 1px variables.$accentblack;
+  -webkit-box-shadow: 0px -1px 10px 1px variables.$accentblack;
+  -moz-box-shadow: 0px -1px 10px 1px variables.$accentblack;
 }
