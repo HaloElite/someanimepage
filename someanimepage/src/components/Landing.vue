@@ -460,9 +460,9 @@ export default {
 
             if (month >= 0 && month < 3) {
                 season.value = "winter";
-            } else if (month >= 3 && month < 8) {
+            } else if (month >= 3 && month <= 5) {
                 season.value = "spring";
-            } else if (month >= 6 && month < 9) {
+            } else if (month >= 6 && month <= 8) {
                 season.value = "summer";
             } else if (month >= 9 && month <= 11) {
                 season.value = "fall";
